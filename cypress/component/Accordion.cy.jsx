@@ -1,5 +1,4 @@
-import ItemsAccordion from '../components/Accordion'
-import styles from './fundamentals.module.css'
+const { default: ItemsAccordion } = require("@/app/components/Accordion")
 
 const items = [
   {
@@ -63,13 +62,18 @@ const items = [
 
 ]
 
-export default function FundamentalsPage() {
-  return (
-    <main className={styles.main}>
-      <h1 className={styles.header} data-testid="fundamentals-title">
-        Testing Fundamentals
-      </h1>
-      <ItemsAccordion items={items} />
-    </main>
-  )
-}
+describe('Accordion.cy.jsx', () => {
+  it('items-accordion', () => {
+    cy.mount(<ItemsAccordion items={items} />)
+
+    cy.get("[data-test=accordion-wrapper]").within(() => {
+      cy.get('[data-testid^="summary"]').should("have.length", items.length)
+
+      cy.get("[data-testid=summary-1]").as("first-element");
+      cy.get("@first-element").click();
+      cy.get("[data-testid=detail-1]").should("be.visible");
+      cy.get("@first-element").click()
+      cy.get("[data-testid=detail-1]").should("not.be.visible");
+    })
+  })
+})
